@@ -31,9 +31,9 @@ measurementId: "G-T8F39XLWJ0"
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const forumInput = document.getElementById('forum-input');
-const postBtn = document.getElementById('post-btn');
-const threadContainer = document.getElementById('thread-container');
+const forumInput = document.getElementByID('forum-input');
+const postBtn = document.getElementByID('post-btn');
+const threadContainer = document.getElementByID('thread-container');
 postBtn.addEventListener('click', () => {
 const text = forumInput.value.trim();
 if (text === "") return alert("Isi dulu pertanyaannya!");
