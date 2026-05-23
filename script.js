@@ -1,11 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-import {
-  getDatabase,
-  ref,
-  push,
-  onValue
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbe_UM7owK0FWjFMz3Twbc9n7FZEQ46VU",
@@ -21,17 +15,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const forumInput =
-  document.getElementById("forum-input");
-
-const postBtn =
-  document.getElementById("post-btn");
-
-const threadContainer =
-  document.getElementById("thread-container");
+const forumInput = document.getElementById("forum-input");
+const postBtn = document.getElementById("post-btn");
+const threadContainer = document.getElementById("thread-container");
 
 postBtn.addEventListener("click", () => {
-
   const text = forumInput.value.trim();
 
   if (text === "") {
@@ -47,7 +35,6 @@ postBtn.addEventListener("click", () => {
 });
 
 onValue(ref(db, "threads"), (snapshot) => {
-
   threadContainer.innerHTML = "";
 
   const data = snapshot.val();
@@ -55,28 +42,18 @@ onValue(ref(db, "threads"), (snapshot) => {
   if (!data) return;
 
   Object.keys(data).forEach((threadId) => {
-
     const thread = data[threadId];
 
-    const postCard =
-      document.createElement("div");
-
+    const postCard = document.createElement("div");
     postCard.className = "post-card";
 
     let htmlContent = `
-      <p class="post-text">
-        ${thread.question}
-      </p>
-
-      <div
-        class="reply-section"
-        id="replies-${threadId}">
+      <p class="post-text">${thread.question}</p>
+      <div class="reply-section" id="replies-${threadId}">
     `;
 
     if (thread.replies) {
-
       Object.keys(thread.replies).forEach((replyId) => {
-
         htmlContent += `
           <div class="reply-item">
             ${thread.replies[replyId].text}
@@ -89,7 +66,6 @@ onValue(ref(db, "threads"), (snapshot) => {
       </div>
 
       <div class="reply-form">
-
         <textarea
           id="input-${threadId}"
           placeholder="Balas pertanyaan ini..."
@@ -100,7 +76,6 @@ onValue(ref(db, "threads"), (snapshot) => {
           data-id="${threadId}">
           Balas
         </button>
-
       </div>
     `;
 
@@ -112,36 +87,31 @@ onValue(ref(db, "threads"), (snapshot) => {
     );
   });
 
-  document
-    .querySelectorAll(".reply-btn")
-    .forEach((btn) => {
+  document.querySelectorAll(".reply-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
 
-      btn.addEventListener("click", (e) => {
+      const threadId =
+        e.target.getAttribute("data-id");
 
-        const threadId =
-          e.target.getAttribute("data-id");
+      const replyInput =
+        document.getElementById(`input-${threadId}`);
 
-        const replyInput =
-          document.getElementById(
-            `input-${threadId}`
-          );
+      const replyText =
+        replyInput.value.trim();
 
-        const replyText =
-          replyInput.value.trim();
+      if (replyText === "") {
+        alert("Isi dulu balasannya!");
+        return;
+      }
 
-        if (replyText === "") {
-          alert("Isi dulu balasannya!");
-          return;
+      push(
+        ref(db, `threads/${threadId}/replies`),
+        {
+          text: replyText
         }
+      );
 
-        push(
-          ref(db, `threads/${threadId}/replies`),
-          {
-            text: replyText
-          }
-        );
-
-        replyInput.value = "";
-      });
+      replyInput.value = "";
     });
+  });
 });
