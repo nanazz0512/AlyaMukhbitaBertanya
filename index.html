@@ -64,10 +64,10 @@ threadContainer.insertBefore(postCard, threadContainer.firstChild);
 document.querySelectorAll('.reply-btn').forEach((btn) => {
 btn.addEventListener('click', (e) => {
 const threadId = e.target.getAttribute('data-id');
-const replyInput = document.getElementById(⁠input-${threadId}⁠);
+const replyInput = document.getElementById(⁠'input-' + threadId);
 const replyText = replyInput.value.trim();
 if (replyText === "") return alert("Isi dulu balasannya!");
-push(ref(db, ⁠threads/${threadId}/replies⁠), {
+push(ref(db, ⁠'threads/' + threadId + '/replies'), {
 text: replyText
 });
 replyInput.value = "";
